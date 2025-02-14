@@ -15,10 +15,13 @@ import { CustomElement } from './Component.js';
 class Modal extends CustomElement {
     constructor(props) {
         super(props);
+        const { title } = this.props;
+        this.setState({ title });
     }
 
     render() {
-        const { id, title, size, backdrop, keyboard } = this.props;
+        const { id, size, backdrop, keyboard } = this.props;
+        const { title } = this.state;
         const sizeClass = size ? `modal-${size}` : '';
         const backdropAttr = backdrop ? 'true' : 'false';
         const keyboardAttr = keyboard ? 'true' : 'false';
@@ -33,9 +36,9 @@ class Modal extends CustomElement {
                 </button>
                 <h4 class="modal-title" id="${id}-label">${title}</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" data-slot="modal-body">
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" data-slot="modal-footer">
             </div>
             </div>
             </div>

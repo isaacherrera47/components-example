@@ -14,16 +14,41 @@
  * @method _replaceSlots - Replaces slot placeholders with actual content.
  */
 export class CustomElement extends HTMLElement {
+    static observedAttributes = ['_state'];
+
     constructor(props = {}) {
         super();
-        this.props = props;
+        this.props = props || {};
         this._syncAttributtes();
+        this.state = {};
+        this._slotValues = [...this.querySelectorAll('[data-slot]')].map(el => ({ slot: el.dataset.slot, value: el.innerHTML }));
+    }
+
+    setState = (newState) => {
+        this._state = { ...newState };
+    }
+
+    setSlot(slot, value) {
+        this._slotValues = this._slotValues.map(slotValue => slotValue.slot === slot ? { slot, value } : slotValue)
+        this._replaceSlots(this._slotValues);
+    }
+
+    set _state(newState) {
+        this.state = newState;
+        this.setAttribute('_state', newState);
+        console.log('State set');
     }
 
     connectedCallback() {
-        const slotValues = [...this.querySelectorAll('[data-slot]')].map(el => ({ slot: el.dataset.slot, value: el.innerHTML }));
         this.innerHTML = this.render();
-        this._replaceSlots(slotValues);
+        this._replaceSlots(this._slotValues);
+        console.log('Connected');
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        console.log('Attribute changed name:', name, 'oldValue:', oldValue, 'newValue:', newValue);
+        this.innerHTML = this.render();
+        this._replaceSlots(this._slotValues);
     }
 
     render() {
@@ -54,10 +79,8 @@ export class CustomElement extends HTMLElement {
 
     _replaceSlots(slotValues) {
         for (const { slot, value } of slotValues) {
-            const slotElement = this.querySelector(`.${slot}`);
+            const slotElement = this.querySelector(`[data-slot="${slot}"]`);
             slotElement.innerHTML = value;
         }
     }
-
-
 }

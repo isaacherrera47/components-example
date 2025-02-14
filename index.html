@@ -12,15 +12,14 @@
 
 <body>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal--child">Open modal</button>
+    <button type="button" class="btn btn-primary change-behavior">Change modal content</button>
     <custom-modal id="myModal" title="myTitle">
         <div data-slot="modal-body">
-            <div class="col-sm-12">
-                <h2 class="text-center">Example text</h2>
-            </div>
+            <bs-button text="first button"></bs-button>
         </div>
         <div data-slot="modal-footer">
-            <button class="btn btn-primary">Close</button>
-            <button class="btn btn-success">Send</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button class="btn btn-success" id="send-btn-modal">Send</button>
         </div>
     </custom-modal>
     <!-- Latest compiled and minified JavaScript -->
@@ -28,7 +27,30 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
-    <script src="./Modal.js" type="module"></script>
+        <script src="./Modal.js" type="module"></script>
+        <script src="./BsButton.js" type="module"></script>
+    <script type="module">
+        window.addEventListener('DOMContentLoaded', () => {
+            const sendBtn = document.getElementById('send-btn-modal');
+            sendBtn.addEventListener('click', () => {
+                alert('Send button clicked');
+            });
+
+            const changeBehavior = document.querySelector('.change-behavior');
+            changeBehavior.addEventListener('click', () => {
+                const myModal = document.getElementById('myModal');
+                myModal.setState({title: 'New title'});
+                myModal.setSlot('modal-body', '<bs-button id="bs-btn" text="Click me"></bs-button>');
+                const btn = document.getElementById('bs-btn');
+                btn.addEventListener('click', () => {
+                    alert('Button clicked');
+                });
+            });
+
+            const myModal = document.getElementById('myModal');
+            console.log(myModal.props);
+        });
+    </script>
 </body>
 
 </html>
